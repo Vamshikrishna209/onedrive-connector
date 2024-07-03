@@ -12,7 +12,7 @@ export class RealTimeController {
     const accessToken = process.env.ACCESS_TOKEN;
     const subscriptionRequest = {
       changeType: 'updated',
-      notificationUrl: 'https://onedrive-client.onrender.com/realtime/notification', // Replace with your public domain
+      notificationUrl: 'https://onedrive-connector.onrender.com/realtime/notification', // Replace with your public domain
       resource: 'me/drive/root',
       expirationDateTime: new Date(Date.now() + 86400000).toISOString(), // 24 hours from now
       clientState: 'secretClientValue',
@@ -42,7 +42,7 @@ export class RealTimeController {
     const notification = req.body;
     console.log("notification " + JSON.stringify(notification)); 
     console.log("validationToken +" + validationToken);
-    // this.eventsService.emitFileChangeEvent(notification);
+    this.eventsService.emitFileChangeEvent(notification);
     return validationToken;
   }
 }
