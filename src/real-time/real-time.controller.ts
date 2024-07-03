@@ -1,4 +1,4 @@
-import { Controller, HttpCode, HttpStatus, Post, Req, Query } from '@nestjs/common';
+import { Controller, HttpCode, HttpStatus, Post, Req, Query, Body, HttpException } from '@nestjs/common';
 import { EventsService } from '../events/events.service';
 import axios from 'axios';
 
@@ -33,6 +33,35 @@ export class RealTimeController {
     } catch (error) {
       console.error('Error creating subscription:', error.response?.data || error.message);
       throw new Error('Subscription creation failed');
+    }
+  }
+
+  @Post('subscribe-file')
+  async subscribeFile(@Body('fileId') fileId: string) {
+    const accessToken = process.env.ACCESS_TOKEN;
+    const subscriptionRequest = {
+      changeType: 'updated',
+      notificationUrl: 'https://onedrive-connector.onrender.com/realtime/notification', // Replace with your public domain
+      resource: `me/drive/items/${fileId}`, // Subscribe to changes for a specific file
+      expirationDateTime: new Date(Date.now() + 86400000).toISOString(), // 24 hours from now
+      clientState: 'secretClientValue',
+    };
+
+    try {
+      const response = await axios.post(
+        'https://graph.microsoft.com/v1.0/subscriptions',
+        subscriptionRequest,
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+            'Content-Type': 'application/json',
+          },
+        },
+      );
+      return response.data;
+    } catch (error) {
+      console.error('Error creating subscription:', error.response?.data || error.message);
+      throw new HttpException('Subscription creation failed', HttpStatus.BAD_REQUEST);
     }
   }
 
