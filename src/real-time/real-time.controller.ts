@@ -1,4 +1,4 @@
-import { Controller, HttpCode, HttpStatus, Post, Req } from '@nestjs/common';
+import { Controller, HttpCode, HttpStatus, Post, Req, Query } from '@nestjs/common';
 import { EventsService } from '../events/events.service';
 import axios from 'axios';
 
@@ -38,14 +38,11 @@ export class RealTimeController {
 
   @Post('notification')
   @HttpCode(200)
-  async handleNotification(@Req() req) {
+  async handleNotification(@Req() req,  @Query('validationToken') validationToken: string) {
     const notification = req.body;
     console.log("notification " + JSON.stringify(notification)); 
-    this.eventsService.emitFileChangeEvent(notification);
-    return {
-      status: HttpStatus.OK,
-      "data" : {
-        "message" : "success"
-      }};
+    console.log("validationToken +" + validationToken);
+    // this.eventsService.emitFileChangeEvent(notification);
+    return validationToken;
   }
 }
