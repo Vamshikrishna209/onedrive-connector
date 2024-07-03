@@ -1,4 +1,4 @@
-import { Controller, Post, Req } from '@nestjs/common';
+import { Controller, HttpCode, HttpStatus, Post, Req } from '@nestjs/common';
 import { EventsService } from '../events/events.service';
 import axios from 'axios';
 
@@ -7,6 +7,7 @@ export class RealTimeController {
   constructor(private readonly eventsService: EventsService) {}
 
   @Post('subscribe')
+  @HttpCode(200)
   async subscribe() {
     const accessToken = process.env.ACCESS_TOKEN;
     const subscriptionRequest = {
@@ -36,13 +37,15 @@ export class RealTimeController {
   }
 
   @Post('notification')
+  @HttpCode(200)
   async handleNotification(@Req() req) {
     const notification = req.body;
+    console.log("notification " + JSON.stringify(notification)); 
+    this.eventsService.emitFileChangeEvent(notification);
     return {
+      status: HttpStatus.OK,
       "data" : {
         "message" : "success"
-      },
-    }
-    this.eventsService.emitFileChangeEvent(notification);
+      }};
   }
 }
