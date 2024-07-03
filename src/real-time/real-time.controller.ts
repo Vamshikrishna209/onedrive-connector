@@ -8,30 +8,41 @@ export class RealTimeController {
 
   @Post('subscribe')
   async subscribe() {
-    // Create a subscription to monitor file changes in OneDrive
-    const response = await axios.post(
-      'https://graph.microsoft.com/v1.0/subscriptions',
-      {
-        changeType: 'updated',
-        notificationUrl: 'https://<your-server>/realtime/notification',
-        resource: 'me/drive/root',
-        expirationDateTime: new Date(Date.now() + 86400000).toISOString(),
-        clientState: 'secretClientValue',
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${process.env.ACCESS_TOKEN}`,
-          'Content-Type': 'application/json',
-        },
-      },
-    );
+    const accessToken = process.env.ACCESS_TOKEN;
+    const subscriptionRequest = {
+      changeType: 'updated',
+      notificationUrl: 'https://onedrive-client.onrender.com/realtime/notification', // Replace with your public domain
+      resource: 'me/drive/root',
+      expirationDateTime: new Date(Date.now() + 86400000).toISOString(), // 24 hours from now
+      clientState: 'secretClientValue',
+    };
 
-    return response.data;
+    try {
+      const response = await axios.post(
+        'https://graph.microsoft.com/v1.0/subscriptions',
+        subscriptionRequest,
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+            'Content-Type': 'application/json',
+          },
+        },
+      );
+      return response.data;
+    } catch (error) {
+      console.error('Error creating subscription:', error.response?.data || error.message);
+      throw new Error('Subscription creation failed');
+    }
   }
 
   @Post('notification')
-  handleNotification(@Req() req: Request) {
+  async handleNotification(@Req() req) {
     const notification = req.body;
+    return {
+      "data" : {
+        "message" : "success"
+      },
+    }
     this.eventsService.emitFileChangeEvent(notification);
   }
 }
