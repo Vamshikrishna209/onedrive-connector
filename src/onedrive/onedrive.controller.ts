@@ -19,4 +19,9 @@ export class OneDriveController {
   async listUsers(@Req() req, @Query('fileId') fileId: string) {
     return this.oneDriveService.listUsers(req, fileId);
   }
+
+  @Get('delta')
+  async getDelta(@Req() req) {
+    return this.oneDriveService.listDelta(req);
+  }
 }

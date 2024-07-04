@@ -26,6 +26,7 @@ export class RealTimeController {
           headers: {
             Authorization: `Bearer ${accessToken}`,
             'Content-Type': 'application/json',
+            Prefer: 'includesecuritywebhooks'
           },
         },
       );
@@ -36,41 +37,11 @@ export class RealTimeController {
     }
   }
 
-  @Post('subscribe-file')
-  async subscribeFile(@Body('fileId') fileId: string) {
-    const accessToken = process.env.ACCESS_TOKEN;
-    const subscriptionRequest = {
-      changeType: 'updated',
-      notificationUrl: 'https://onedrive-connector.onrender.com/realtime/notification', // Replace with your public domain
-      resource: `me/drive/items/${fileId}`, // Subscribe to changes for a specific file
-      expirationDateTime: new Date(Date.now() + 86400000).toISOString(), // 24 hours from now
-      clientState: 'secretClientValue',
-    };
-
-    try {
-      const response = await axios.post(
-        'https://graph.microsoft.com/v1.0/subscriptions',
-        subscriptionRequest,
-        {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-            'Content-Type': 'application/json',
-          },
-        },
-      );
-      return response.data;
-    } catch (error) {
-      console.error('Error creating subscription:', error.response?.data || error.message);
-      throw new HttpException('Subscription creation failed', HttpStatus.BAD_REQUEST);
-    }
-  }
-
   @Post('notification')
   @HttpCode(200)
   async handleNotification(@Req() req,  @Query('validationToken') validationToken: string) {
     const notification = req.body;
     console.log("notification " + JSON.stringify(notification)); 
-    console.log("validationToken +" + validationToken);
     this.eventsService.emitFileChangeEvent(notification);
     return validationToken;
   }

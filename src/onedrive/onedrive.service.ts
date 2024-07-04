@@ -45,4 +45,19 @@ export class OneDriveService {
       throw new Error('Failed to list users');
     }
   }
+
+  async listDelta(@Req() req) {
+    const accessToken = req['accessToken'];
+    const deltaUrl = `https://graph.microsoft.com/v1.0/me/drive/root/delta`;
+
+    try {
+      const response = await axios.get(deltaUrl, {
+        headers: { Authorization: `Bearer ${accessToken}` },
+      });
+      return response.data;
+    } catch (error) {
+      console.error('Error fetching delta:', error.response?.data || error.message);
+      throw new Error('Fetching delta failed');
+    }
+  }
 }

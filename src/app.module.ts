@@ -36,6 +36,7 @@ export class AppModule {
         { path: 'onedrive/list-files', method: RequestMethod.GET },
         { path: 'onedrive/download-file', method: RequestMethod.GET },
         { path: 'onedrive/list-users', method: RequestMethod.GET },
+        { path: 'onedrive/delta', method: RequestMethod.GET },
       ); 
   }
 }
