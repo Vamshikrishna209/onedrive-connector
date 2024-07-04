@@ -20,7 +20,9 @@ export class RealTimeController {
   async handleNotification(@Req() req, @Query('validationToken') validationToken: string) {
     const notification = this.realTimeService.handleNotification(req);
     console.log("Notification:", JSON.stringify(notification));
-    this.eventsService.emitFileChangeEvent(notification);
+    if (typeof notification == 'object') {
+      this.eventsService.emitFileChangeEvent(notification);
+    }
     return validationToken;
   }
 }
