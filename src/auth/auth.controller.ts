@@ -1,12 +1,12 @@
 import { Controller, Get, Query, Redirect } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { RealTimeController } from '../real-time/real-time.controller';
+import { RealTimeService } from '../real-time/real-time.service';
 
 @Controller('auth')
 export class AuthController {
   constructor(
     private readonly authService: AuthService,
-    private readonly realtime: RealTimeController
+    private readonly realtime: RealTimeService
   ) {}
 
   @Get('login')

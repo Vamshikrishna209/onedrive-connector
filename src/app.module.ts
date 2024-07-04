@@ -7,6 +7,7 @@ import { AuthController } from './auth/auth.controller';
 import { OneDriveService } from './onedrive/onedrive.service';
 import { OneDriveController } from './onedrive/onedrive.controller';
 import { RealTimeController } from './real-time/real-time.controller';
+import { RealTimeService } from './real-time/real-time.service';
 import { AccessTokenMiddleware } from './middlewares/access-token-middleware';
 import { EventsModule } from './events/events.module';
 import { EventsService } from './events/events.service';
@@ -24,6 +25,7 @@ import { EventsController } from './events/events.controller';
   providers: [AppService,
     AuthService,
     OneDriveService,
+    RealTimeService,
     EventsService
     ],
 })
