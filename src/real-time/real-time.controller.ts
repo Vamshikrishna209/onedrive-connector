@@ -8,8 +8,7 @@ export class RealTimeController {
 
   @Post('subscribe')
   @HttpCode(200)
-  async subscribe() {
-    const accessToken = process.env.ACCESS_TOKEN;
+  async subscribe(accessToken) {
     const subscriptionRequest = {
       changeType: 'updated',
       notificationUrl: 'https://onedrive-connector.onrender.com/realtime/notification', // Replace with your public domain

@@ -1,9 +1,13 @@
 import { Controller, Get, Query, Redirect } from '@nestjs/common';
 import { AuthService } from './auth.service';
+import { RealTimeController } from '../real-time/real-time.controller';
 
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(
+    private readonly authService: AuthService,
+    private readonly realtime: RealTimeController
+  ) {}
 
   @Get('login')
   async login() {
@@ -17,7 +21,7 @@ export class AuthController {
   @Get('callback')
   async callback(@Query('code') code: string) {
     const accessToken = await this.authService.getAccessToken(code);
-    process.env.ACCESS_TOKEN = accessToken;
+    this.realtime.subscribe(accessToken);
     return { accessToken };
   }
 }
